@@ -1,4 +1,4 @@
-
+# app.py
 
 import streamlit as st
 import pandas as pd
@@ -15,7 +15,7 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, mean_square
 import warnings
 warnings.filterwarnings("ignore")
 
-st.title(" Self-Driving ML Predictor")
+st.title("Self-Driving ML Predictor")
 
 uploaded_file = st.file_uploader("Upload your CSV dataset", type=["csv"])
 
@@ -97,7 +97,7 @@ if uploaded_file is not None:
     st.subheader("Model Evaluation Results:")
     st.table(pd.DataFrame.from_dict(results, orient='index', columns=["Score"]))
 
-    st.success(f" Best Model: **{best_model_name}** with Score = {round(best_score,4)}")
+    st.success(f"Best Model: **{best_model_name}** with Score = {round(best_score,4)}")
 
     st.subheader("Predictions on Uploaded Dataset:")
     predictions = best_model_pipeline.predict(X)
@@ -113,36 +113,7 @@ if uploaded_file is not None:
         file_name="predictions.csv",
         mime="text/csv"
     )
-            df[col] = 0  # fill missing columns with 0
 
-    X = df[features]
-
-    # Make predictions
-    predictions = model.predict(X)
-    df["Prediction"] = predictions
-
-    # If classification model, show probabilities
-    if hasattr(model, "predict_proba"):
-        prob = model.predict_proba(X)
-        # Assuming binary classification: probability of class 1
-        df["Prediction_Prob"] = prob[:, 1]
-
-    # Show only original columns + predictions (and probabilities if classification)
-    display_columns = original_columns + ["Prediction"]
-    if "Prediction_Prob" in df.columns:
-        display_columns.append("Prediction_Prob")
-
-    st.subheader("Prediction Results")
-    st.dataframe(df[display_columns])
-
-    # Allow download
-    csv = df[display_columns].to_csv(index=False)
-    st.download_button(
-        label="Download Predictions",
-        data=csv,
-        file_name="predictions.csv",
-        mime="text/csv"
-    )
 
 
 
