@@ -1,14 +1,20 @@
 import streamlit as st
-import requests
+import pandas as pd
+import joblib
 
-st.title("Neuroforge ML Prediction")
+uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
 
-uploaded_file = st.file_uploader("Upload CSV for Prediction", type="csv")
+if uploaded_file is not None:
+    model = joblib.load("final_model.pkl")
+    features = joblib.load("features_model.pkl")  # list of feature columns
 
-if uploaded_file:
-    st.write("Sending file to ML API...")
-    response = requests.post("http://127.0.0.1:8001/predict", files={"file": uploaded_file})
-    if response.status_code == 200:
-        st.json(response.json())
-    else:
-        st.error("Error connecting to ML API")
+    df = pd.read_csv(uploaded_file)
+    for col in features:
+        if col not in df.columns:
+            df[col] = 0
+
+    X = df[features]
+    df["Prediction"] = model.predict(X)
+
+    st.dataframe(df)
+    st.download_button("Download Predictions", df.to_csv(index=False), file_name="predictions.csv")
