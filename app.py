@@ -6,7 +6,7 @@ uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
 
 if uploaded_file is not None:
     model = joblib.load("final_model.pkl")
-    features = joblib.load("feature_model.pkl")  # list of feature columns
+    features = joblib.load("feature_columns.pkl")  # list of feature columns
 
     df = pd.read_csv(uploaded_file)
     for col in features:
@@ -18,4 +18,5 @@ if uploaded_file is not None:
 
     st.dataframe(df)
     st.download_button("Download Predictions", df.to_csv(index=False), file_name="predictions.csv")
+
 
